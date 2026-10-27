@@ -1,0 +1,14 @@
+{
+  "name": "ballworld-store",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24.0.0" },
+  "scripts": {
+    "start": "node apps/api/server.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "capture": "node scripts/capture/site.mjs",
+    "import": "node scripts/import/catalog.mjs",
+    "backup": "node scripts/ops/backup.mjs"
+  }
+}

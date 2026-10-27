@@ -1,0 +1,16 @@
+{
+  "externalResponsesMocked": false,
+  "messagesSent": 0,
+  "results": [
+    {
+      "device": "desktop",
+      "url": "https://api.whatsapp.com/send/?phone=8613247374144&text=%E6%82%A8%E5%A5%BD%EF%BC%8C%E6%88%91%E6%83%B3%E5%92%A8%E8%AF%A2%E5%95%86%E5%93%81%E3%80%82&type=phone_number&app_absent=0",
+      "officialPageText": "功能\n隐私\n博客\n应用\n帮助中心\n商家专区\n登录\n下载\n\n在 WhatsApp 上与 +86 132 4737 4144 聊天\n\n您好，我想咨询商品。\n\n打开应用\n继续前往 WhatsApp 网页版\n没有 WhatsApp 应用？\n立即下载\n下载\n功用介绍\n功能\n博客\n安全\n商家专区\n我们是谁\n关于我们\n招聘信息\n品牌中心\n隐私\n使用 WhatsApp\n移动设备\n桌面设备\n平板电脑\nWhatsApp 网页版\n需要帮助？\n联系我们\n帮助中心\n应用\n安全声明\n\n2026 © WhatsApp LLC\n\n条款和隐私政策\n网站地图\n简体中文"
+    },
+    {
+      "device": "mobile",
+      "url": "https://api.whatsapp.com/send/?phone=8613247374144&text=%E6%82%A8%E5%A5%BD%EF%BC%8C%E6%88%91%E6%83%B3%E5%92%A8%E8%AF%A2%E5%95%86%E5%93%81%E3%80%82&type=phone_number&app_absent=0",
+      "officialPageText": "下载\n\n在 WhatsApp 上与 +86 132 4737 4144 聊天\n\n您好，我想咨询商品。\n\n打开应用\n继续前往 WhatsApp 网页版\n没有 WhatsApp 应用？\n立即下载\n下载\n功用介绍\n功能\n博客\n安全\n商家专区\n我们是谁\n关于我们\n招聘信息\n品牌中心\n隐私\n使用 WhatsApp\n移动设备\n桌面设备\n平板电脑\nWhatsApp 网页版\n需要帮助？\n联系我们\n帮助中心\n应用\n安全声明\n\n2026 © WhatsApp LLC\n\n条款和隐私政策\n网站地图\n简体中文"
+    }
+  ]
+}

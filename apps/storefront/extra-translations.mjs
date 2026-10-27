@@ -1,0 +1,35 @@
+// Additional common interface translations. Unlisted strings use the English fallback.
+const keys=['首页','搜索...','账户','购物车','立即购买','国家队','俱乐部球队'];
+const rows={
+ hu:'Kezdőlap|Keresés...|Fiók|Kosár|Vásárlás most|Válogatottak|Klubcsapatok',
+ ro:'Acasă|Caută...|Cont|Coș|Cumpără acum|Echipe naționale|Cluburi',
+ sk:'Domov|Hľadať...|Účet|Košík|Nakupovať|Národné tímy|Kluby',
+ uk:'Головна|Пошук...|Обліковий запис|Кошик|Купити зараз|Збірні|Клуби',
+ sl:'Domov|Iskanje...|Račun|Košarica|Nakupujte zdaj|Reprezentance|Klubi',
+ bg:'Начало|Търсене...|Профил|Количка|Купете сега|Национални отбори|Клубове',
+ vi:'Trang chủ|Tìm kiếm...|Tài khoản|Giỏ hàng|Mua ngay|Đội tuyển quốc gia|Câu lạc bộ',
+ tr:'Ana sayfa|Ara...|Hesap|Sepet|Şimdi alışveriş yap|Millî takımlar|Kulüpler',
+ hr:'Početna|Traži...|Račun|Košarica|Kupujte sada|Reprezentacije|Klubovi',
+ af:'Tuis|Soek...|Rekening|Mandjie|Koop nou|Nasionale spanne|Klubspanne',
+ sq:'Kreu|Kërko...|Llogaria|Shporta|Bli tani|Ekipet kombëtare|Klubet',
+ az:'Ana səhifə|Axtar...|Hesab|Səbət|İndi al|Milli komandalar|Klublar',
+ be:'Галоўная|Пошук...|Уліковы запіс|Кошык|Купіць зараз|Зборныя|Клубы',
+ bs:'Početna|Pretraži...|Račun|Korpa|Kupite sada|Reprezentacije|Klubovi',
+ ca:'Inici|Cerca...|Compte|Cistella|Compra ara|Seleccions nacionals|Clubs',
+ eo:'Hejmo|Serĉi...|Konto|Ĉaro|Aĉetu nun|Naciaj teamoj|Klubaj teamoj',
+ gl:'Inicio|Buscar...|Conta|Cesta|Mercar agora|Seleccións nacionais|Clubs',
+ he:'דף הבית|חיפוש...|חשבון|עגלה|קנו עכשיו|נבחרות לאומיות|קבוצות מועדון',
+ hi:'होम|खोजें...|खाता|कार्ट|अभी खरीदें|राष्ट्रीय टीमें|क्लब टीमें',
+ is:'Heim|Leita...|Aðgangur|Karfa|Versla núna|Landslið|Félagslið',
+ ga:'Baile|Cuardaigh...|Cuntas|Ciseán|Ceannaigh anois|Foirne náisiúnta|Foirne club',
+ lb:'Haaptsäit|Sichen...|Kont|Wuerekorb|Elo kafen|Nationalekippen|Veräiner',
+ mk:'Почетна|Пребарај...|Сметка|Кошничка|Купи сега|Репрезентации|Клубови',
+ mt:'Paġna ewlenija|Fittex...|Kont|Karrettun|Ixtri issa|Timijiet nazzjonali|Klabbs',
+ fa:'خانه|جستجو...|حساب کاربری|سبد خرید|اکنون خرید کنید|تیم‌های ملی|باشگاه‌ها',
+ sr:'Почетна|Претрага...|Налог|Корпа|Купите сада|Репрезентације|Клубови',
+ sw:'Nyumbani|Tafuta...|Akaunti|Kikapu|Nunua sasa|Timu za taifa|Vilabu',
+ tl:'Home|Maghanap...|Account|Cart|Mamili ngayon|Mga pambansang koponan|Mga club',
+ ur:'ہوم|تلاش کریں...|اکاؤنٹ|کارٹ|ابھی خریدیں|قومی ٹیمیں|کلب ٹیمیں',
+ cy:'Hafan|Chwilio...|Cyfrif|Basged|Siopa nawr|Timau cenedlaethol|Clybiau'
+};
+export const extraTranslations=Object.fromEntries(Object.entries(rows).map(([code,row])=>{const values=row.split('|');if(values.length!==keys.length)throw new Error('Invalid extra translation: '+code);const dict=Object.fromEntries(keys.map((key,i)=>[key,values[i]]));dict['购物袋']=dict['购物车'];dict['搜索商品']=dict['搜索...'].replace('...','');return [code,dict];}));

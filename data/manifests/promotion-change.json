@@ -1,0 +1,35 @@
+{
+  "backup": "E:\\独立站\\storage\\backups\\2026-10-14T15-43-40.579Z-before-promotions",
+  "scope": "database-only",
+  "mediaCopied": false,
+  "createdAt": "2026-10-14T15:43:41.278Z",
+  "verifiedAt": "2026-10-14T16:52:01.578Z",
+  "rules": {
+    "enabled": true,
+    "tiers": [
+      {
+        "quantity": 3,
+        "amount": 500
+      },
+      {
+        "quantity": 8,
+        "amount": 1000
+      },
+      {
+        "quantity": 10,
+        "amount": 1800
+      }
+    ]
+  },
+  "integrity": {
+    "quick_check": "ok"
+  },
+  "foreignKeyErrors": 0,
+  "products": 4166,
+  "testsPassed": 36,
+  "screenshots": [
+    "docs/screenshots/product-quantity-promotion.png",
+    "docs/screenshots/admin-quantity-promotion.png",
+    "docs/screenshots/product-quantity-promotion-mobile.png"
+  ]
+}

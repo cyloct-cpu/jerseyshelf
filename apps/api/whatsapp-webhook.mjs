@@ -1,0 +1,21 @@
+import {createHmac,timingSafeEqual,createHash} from 'node:crypto';
+import {db,transaction,now,putSetting} from './db.mjs';
+import {waConfig,waCredentials} from './whatsapp-config.mjs';
+import {InputError} from '../../packages/contracts/validation.mjs';
+import {recordWaReceipt} from './whatsapp-receipts.mjs';
+import {revokeAccountPhone} from './account-permissions.mjs';
+const equal=(a,b)=>{const x=Buffer.from(String(a)),y=Buffer.from(String(b));return x.length===y.length&&timingSafeEqual(x,y);};
+export function verifyWaWebhook(params){const c=waConfig(),secret=waCredentials();if(c.mode!=='cloud'||!secret.verifyToken||params.get('hub.mode')!=='subscribe'||!equal(params.get('hub.verify_token'),secret.verifyToken))throw new InputError('Webhook验证失败',403);const challenge=params.get('hub.challenge');if(!/^\d{1,100}$/.test(challenge||''))throw new InputError('challenge无效');putSetting('whatsapp',{...c,webhookVerifiedAt:now()});return challenge;}
+export function receiveWaWebhook(raw,signature){const c=waConfig(),secret=waCredentials();if(!secret.appSecret||c.mode!=='cloud')throw new InputError('Webhook尚未配置',503);const expected='sha256='+createHmac('sha256',secret.appSecret).update(raw).digest('hex');if(!equal(signature||'',expected))throw new InputError('Webhook签名无效',403);let data;try{data=JSON.parse(raw);}catch{throw new InputError('Webhook JSON无效');}if(data.object!=='whatsapp_business_account')throw new InputError('Webhook类型无效');const hash=createHash('sha256').update(raw).digest('hex');return transaction(()=>{if(db.prepare('SELECT hash FROM whatsapp_webhook_events WHERE hash=?').get(hash))return;db.prepare('INSERT INTO whatsapp_webhook_events VALUES(?,?)').run(hash,now());
+ for(const entry of data.entry||[]){if(String(entry.id)!==c.wabaId)continue;for(const change of entry.changes||[]){const value=change.value;if(change.field!=='messages'||String(value?.metadata?.phone_number_id)!==c.phoneId)continue;
+  for(const status of Array.isArray(value.statuses)?value.statuses:[])recordWaReceipt(status);
+  for(const message of value.messages||[]){const phone=String(message.from||''),id=String(message.id||'');if(!/^[1-9]\d{6,14}$/.test(phone)||!id||id.length>300||db.prepare('SELECT id FROM whatsapp_messages WHERE platform_id=?').get(id))continue;
+   const matches=db.prepare("SELECT DISTINCT c.id FROM customers c LEFT JOIN whatsapp_permissions p ON p.customer_id=c.id LEFT JOIN account_contact_permissions a ON a.customer_id=c.id AND a.channel='whatsapp' WHERE c.phone=? OR p.phone=? OR a.address=?").all(phone,phone,phone),customerId=matches.length===1?matches[0].id:null;
+   const body=message.type==='text'?String(message.text?.body||'').slice(0,4096):'[客户发送 '+String(message.type||'未知').slice(0,50)+' 消息，未下载附件]';let orderId=null;const code=body.match(/\bBW-[A-Z0-9-]{3,70}\b/)?.[0];if(code&&customerId)orderId=db.prepare('SELECT id FROM orders WHERE id=? AND customer_id=?').get(code,customerId)?.id||null;
+   db.prepare("INSERT INTO whatsapp_messages(id,customer_id,order_id,phone,direction,kind,status,body,platform_id,created_at,updated_at) VALUES(?,?,?,?,'in','service','received',?,?,?,?)").run(createHash('sha256').update(id).digest('hex').slice(0,32),customerId,orderId,phone,body,id,now(),now());
+   const received=Number(message.timestamp)*1000,at=Number.isFinite(received)&&received>946684800000&&received<=Date.now()+300000?new Date(received).toISOString():now();
+   if(customerId){db.prepare("UPDATE customers SET whatsapp_status=CASE WHEN phone=? THEN 'connected' ELSE whatsapp_status END,whatsapp_verified_at=CASE WHEN phone=? THEN MAX(COALESCE(whatsapp_verified_at,''),?) ELSE whatsapp_verified_at END,last_contact_at=MAX(COALESCE(last_contact_at,''),?),updated_at=? WHERE id=?").run(phone,phone,at,at,now(),customerId);db.prepare("INSERT INTO customer_events(customer_id,order_id,kind,body,created_at) VALUES(?,?,'whatsapp_inbound',?,?)").run(customerId,orderId,'收到WhatsApp消息：'+body,at);}
+   if(/^(stop|unsubscribe|退订|停止)$/i.test(body.trim())){revokeAccountPhone(phone);db.prepare('UPDATE whatsapp_permissions SET granted=0,updated_at=? WHERE phone=?').run(now(),phone);db.prepare("UPDATE whatsapp_messages SET status='cancelled',last_error='客户已退订此渠道',updated_at=? WHERE phone=? AND status='queued'").run(now(),phone);}
+  }
+ }}
+ });}

@@ -1,0 +1,12 @@
+{
+  "integrity": "ok",
+  "foreignKeys": "ok",
+  "media": "ok",
+  "counts": {
+    "products": 14,
+    "collections": 31,
+    "media": 0,
+    "orders": 0,
+    "users": 1
+  }
+}

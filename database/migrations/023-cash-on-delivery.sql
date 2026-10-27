@@ -1,0 +1,12 @@
+ALTER TABLE orders ADD COLUMN payment_method TEXT NOT NULL DEFAULT 'prepaid';
+ALTER TABLE orders ADD COLUMN cod_confirmed_at TEXT NOT NULL DEFAULT '';
+ALTER TABLE orders ADD COLUMN cod_amount INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE orders ADD COLUMN cod_currency TEXT NOT NULL DEFAULT 'USD';
+ALTER TABLE orders ADD COLUMN cod_note TEXT NOT NULL DEFAULT '';
+ALTER TABLE orders ADD COLUMN shipping_address TEXT NOT NULL DEFAULT '';
+ALTER TABLE shipments ADD COLUMN cod_amount INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE shipments ADD COLUMN collected_amount INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE shipments ADD COLUMN collected_at TEXT NOT NULL DEFAULT '';
+ALTER TABLE shipments ADD COLUMN restocked_at TEXT NOT NULL DEFAULT '';
+CREATE TABLE cod_events(id INTEGER PRIMARY KEY,order_id TEXT NOT NULL REFERENCES orders(id),shipment_id INTEGER REFERENCES shipments(id),kind TEXT NOT NULL,body TEXT NOT NULL,actor_id INTEGER NOT NULL REFERENCES users(id),occurred_at TEXT NOT NULL,created_at TEXT NOT NULL);
+CREATE TABLE cod_remittances(id INTEGER PRIMARY KEY,order_id TEXT NOT NULL REFERENCES orders(id),gross INTEGER NOT NULL CHECK(gross>0),fee INTEGER NOT NULL CHECK(fee>=0 AND fee<=gross),net INTEGER NOT NULL CHECK(net=gross-fee),currency TEXT NOT NULL,reference TEXT NOT NULL,occurred_at TEXT NOT NULL,actor_id INTEGER NOT NULL REFERENCES users(id),request_key TEXT NOT NULL UNIQUE,created_at TEXT NOT NULL,UNIQUE(order_id,reference));

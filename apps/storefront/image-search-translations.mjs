@@ -1,0 +1,23 @@
+export const imageSearchTranslations={
+ '管理员预览：图片搜款尚未向访客开放，试验索引不代表完整图库效果。':'Admin preview: image search is not public. This sample index does not represent the complete catalog.',
+ '以图搜款':'Search by image','文字搜索':'Text search','上传图片，寻找对应款式':'Upload a photo to find a style','点击选图，或将图片拖到这里':'Choose a photo or drag it here',
+ '支持 JPG、PNG、WebP，单张不超过 8 MB；也可粘贴图片。':'JPG, PNG or WebP, up to 8 MB. You can also paste an image.',
+ '拖动框选球衣区域，或使用整张图片。尽量裁掉聊天边框和无关背景。':'Drag to crop the jersey, or use the whole image. Remove borders and unrelated backgrounds.',
+ '图片裁剪预览':'Image crop preview','左边界':'Left edge','上边界':'Top edge','宽度':'Width','高度':'Height','使用整张图片':'Use whole image','开始搜款':'Find styles','取消':'Cancel','本次搜索图片':'Search image','相似款式':'Similar styles','更换图片':'Change image',
+ '图片仅用于本次搜款，处理后不保存原图。结果为相似款候选，请核对赛季、版本和细节。':'Your photo is processed for this search and is not stored. Check the season, version and details of each suggested style.',
+ '请选择一张 JPG、PNG 或 WebP 图片（不超过 8 MB）':'Choose a JPG, PNG or WebP image up to 8 MB',
+ '图片像素过大，请使用不超过 2000 万像素的图片':'Choose an image with no more than 20 megapixels',
+ '正在以图搜款，请稍候…':'Finding similar styles…','搜款暂不可用，请稍后重试':'Image search is unavailable. Please try again later.',
+ '裁剪选区过小，请重新选择':'The crop is too small. Select a larger area.',
+ '图片已准备好，可裁剪后开始搜款':'Your photo is ready. Crop it or start searching.',
+ '暂未找到足够相似的款式，请换图、重新裁剪或使用文字搜索。':'No close matches. Try another photo, crop it again, or use text search.',
+ '图片搜索已过期，请重新上传图片':'Your image search has expired. Please upload again.',
+ '以图搜款暂未开放，请使用文字搜索':'Image search is not available yet. Please use text search.',
+ '搜款服务繁忙，请稍后重试':'Image search is busy. Please try again shortly.',
+ '图片无法识别，请使用清晰的 JPG、PNG 或 WebP 图片':'Unable to read this image. Use a clear JPG, PNG or WebP photo.',
+ '图库索引尚未就绪，请使用文字搜索':'Image search is not ready. Please use text search.',
+ '搜款过于频繁，请稍后重试':'Too many searches. Please wait before trying again.',
+ '以图搜款暂不可用，请稍后重试':'Image search is unavailable. Please try again later.',
+ '搜款超时，请稍后重试':'Image search timed out. Please try again.',
+ '相似程度':'Similarity','全部分类':'All categories'
+};

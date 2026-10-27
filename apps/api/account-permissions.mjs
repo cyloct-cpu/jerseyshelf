@@ -1,0 +1,20 @@
+import {db,now,transaction} from './db.mjs';
+import {registrationWaVersion,marketingVersion} from '../../packages/contracts/registration.mjs';
+import {InputError,int,text} from '../../packages/contracts/validation.mjs';
+export function writeAccountPermission(u,channel,scope,address,state,source,locale=u.whatsapp_locale||'en'){
+ const version=channel==='whatsapp'?registrationWaVersion:marketingVersion;
+ const old=db.prepare('SELECT * FROM account_contact_permissions WHERE user_id=? AND channel=? AND scope=? AND address=?').get(u.id,channel,scope,address);
+ if(old?.state===state&&old.version===version)return;
+ const values=[u.id,u.customer_id,channel,scope,address,state,source,version,locale,now()];
+ db.prepare('INSERT INTO account_contact_permissions VALUES(?,?,?,?,?,?,?,?,?,?) ON CONFLICT(user_id,channel,scope,address) DO UPDATE SET state=excluded.state,source=excluded.source,version=excluded.version,locale=excluded.locale,updated_at=excluded.updated_at').run(...values);
+ db.prepare('INSERT INTO account_permission_events(user_id,customer_id,channel,scope,address,state,source,version,locale,created_at) VALUES(?,?,?,?,?,?,?,?,?,?)').run(...values);
+ db.prepare("INSERT INTO customer_events(customer_id,kind,body,actor_id,created_at) VALUES(?,'account_permission',?,?,?)").run(u.customer_id,(channel==='whatsapp'?'注册WhatsApp联系':'邮件优惠订阅')+'：'+address+' / '+({unknown:'授权未知',granted:'同意',declined:'未授权',revoked:'已撤回'})[state]+' / '+source+' / '+version,u.id,now());
+}
+export function accountPermission(userId,channel,scope,address){return db.prepare('SELECT * FROM account_contact_permissions WHERE user_id=? AND channel=? AND scope=? AND address=?').get(userId,channel,scope,address);}
+export function accountPreferences(userId){const u=db.prepare("SELECT * FROM users WHERE id=? AND role='customer'").get(userId);if(!u)throw new InputError('请使用客户账户',403);return {user:u,whatsapp:accountPermission(u.id,'whatsapp','registration_service',u.whatsapp_phone),marketing:accountPermission(u.id,'email','email_marketing',u.email)};}
+export function revokeAccountPhone(phone,source='whatsapp_stop'){
+ return transaction(()=>{const records=db.prepare("SELECT p.*,u.whatsapp_locale FROM account_contact_permissions p JOIN users u ON u.id=p.user_id WHERE channel='whatsapp' AND address=? AND state!='revoked'").all(phone);for(const p of records)writeAccountPermission({id:p.user_id,customer_id:p.customer_id,whatsapp_locale:p.whatsapp_locale},'whatsapp','registration_service',phone,'revoked',source);});
+}
+export function registrationContactPermission(customerId,phone){return db.prepare("SELECT p.* FROM account_contact_permissions p JOIN users u ON u.id=p.user_id WHERE p.customer_id=? AND p.channel='whatsapp' AND p.scope='registration_service' AND p.address=? AND u.whatsapp_phone=p.address ORDER BY p.updated_at DESC LIMIT 1").get(customerId,phone);}
+export function recordAccountContactClick(user){if(user?.role!=='customer'||!user.customer_id)return;transaction(()=>{db.prepare('UPDATE users SET whatsapp_clicked_at=? WHERE id=?').run(now(),user.id);db.prepare("INSERT INTO customer_events(customer_id,kind,body,actor_id,created_at) VALUES(?,'whatsapp_store_click','客户打开本店WhatsApp入口（不代表已发送或已添加联系人）',?,?)").run(user.customer_id,user.id,now());});}
+export function revokeRegistrationPermission(input,actor){return transaction(()=>{const cid=int(input.customer_id,'客户',1),uid=int(input.user_id,'账户',1),channel=text(input.channel,'渠道',20),address=text(input.address||'','联系地址',254,false);if(!['whatsapp','email'].includes(channel))throw new InputError('渠道无效');const scope=channel==='whatsapp'?'registration_service':'email_marketing',p=accountPermission(uid,channel,scope,address);if(!p||p.customer_id!==cid)throw new InputError('授权记录不属于此客户',404);writeAccountPermission({id:uid,customer_id:cid},channel,scope,address,'revoked','admin_withdrawal',p.locale);if(channel==='email')db.prepare('UPDATE subscribers SET active=0 WHERE email=?').run(address);db.prepare("INSERT INTO customer_events(customer_id,kind,body,actor_id,created_at) VALUES(?,'account_permission_admin','管理员撤回注册联系授权',?,?)").run(cid,actor,now());return cid;});}

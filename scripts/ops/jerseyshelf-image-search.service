@@ -1,0 +1,33 @@
+[Unit]
+Description=JerseyShelf private image similarity service
+After=local-fs.target
+
+[Service]
+Type=simple
+User=jerseyshelf
+Group=jerseyshelf
+WorkingDirectory=/www/wwwroot/jerseyshelf
+Environment=IMAGE_SEARCH_STATE=/www/wwwroot/jerseyshelf/storage/image-search
+Environment=IMAGE_SEARCH_THREADS=1
+Environment=OMP_NUM_THREADS=1
+Environment=OPENBLAS_NUM_THREADS=1
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/jerseyshelf/image-search-venv/bin/python scripts/image-search/engine.py unix --socket /www/wwwroot/jerseyshelf/storage/image-search/search.sock
+Restart=on-failure
+RestartSec=10
+Nice=5
+CPUQuota=80%
+MemoryHigh=600M
+MemoryMax=700M
+TasksMax=24
+StandardOutput=append:/www/wwwroot/jerseyshelf/storage/image-search/service.log
+StandardError=append:/www/wwwroot/jerseyshelf/storage/image-search/service-error.log
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/www/wwwroot/jerseyshelf/storage/image-search
+
+[Install]
+WantedBy=multi-user.target

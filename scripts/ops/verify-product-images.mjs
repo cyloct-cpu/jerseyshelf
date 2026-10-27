@@ -1,0 +1,77 @@
+import { languages } from '../../packages/contracts/locales.mjs';
+import { createRequire } from 'node:module';
+import { spawn } from 'node:child_process';
+import { mkdirSync, rmSync } from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+// Supply the installed Playwright package path when running this optional browser check.
+const { chromium }=createRequire(import.meta.url)(process.env.PLAYWRIGHT_PATH||'playwright');
+const root=process.cwd(),dir=path.join(root,'tests','.tmp-image-ui-'+process.pid);mkdirSync(dir,{recursive:true});
+const server=spawn(process.execPath,['apps/api/server.mjs'],{env:{...process.env,PORT:'32991',DATABASE_PATH:path.join(dir,'test.sqlite'),MEDIA_PATH:path.join(dir,'media'),ADMIN_EMAIL:'ui@local.test',ADMIN_PASSWORD:'ui-test-password-123456',FX_AUTO_UPDATE:'false'},stdio:'ignore'});
+let browser;
+try{
+  for(let i=0;i<100;i++){try{if((await fetch('http://127.0.0.1:32991/health')).ok)break;}catch{}await new Promise(r=>setTimeout(r,100));}
+  browser=await chromium.launch({headless:true,channel:process.env.BROWSER_CHANNEL||undefined});const page=await browser.newPage({viewport:{width:1400,height:1000}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto('http://127.0.0.1:32991/');
+  await page.locator('[data-team-menu="national"] summary').hover();
+  assert.equal(await page.locator('[data-team-menu="national"] .team-column').count(),4);
+  await page.screenshot({path:path.join(root,'docs/screenshots/national-team-menu.png')});
+  await page.locator('[data-team-menu="club"] summary').hover();
+  assert.equal(await page.locator('[data-team-menu="national"]').getAttribute('open'),null);
+  assert.equal(await page.locator('[data-team-menu="club"] .team-column').count(),5);
+  await page.screenshot({path:path.join(root,'docs/screenshots/club-team-menu.png')});
+  await page.keyboard.press('Escape');assert.equal(await page.locator('[data-team-menu="club"]').getAttribute('open'),null);
+  const mobile=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+  await mobile.goto('http://127.0.0.1:32991/');await mobile.locator('[data-team-menu="national"] summary').tap();assert.equal(await mobile.locator('[data-team-menu="national"] .team-links').isVisible(),true);assert.equal(await mobile.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);await mobile.close();
+  await page.mouse.move(1390,950);
+  await page.locator('.language-menu summary').click();assert.equal(await page.locator('.language-options a').count(),languages.length);
+  await page.locator('.language-options a[lang="en"]').click();await page.waitForFunction(()=>document.documentElement.lang==='en');
+  await page.reload();assert.equal(await page.locator('html').getAttribute('lang'),'en');
+  await page.goto('http://127.0.0.1:32991/cart');assert.ok((await page.locator('main').textContent()).includes('Your cart is empty'));
+  await page.locator('.language-menu summary').click();await page.locator('.language-options a[lang="ar"]').click();await page.waitForFunction(()=>document.documentElement.dir==='rtl');await page.screenshot({path:path.join(root,'docs/screenshots/language-arabic.png')});
+  await page.locator('.language-menu summary').click();await page.locator('.language-options a[lang="vi"]').click();await page.waitForFunction(()=>document.documentElement.lang==='vi');assert.equal(await page.locator('.nav>a').first().textContent(),'Trang chủ');
+  await page.locator('.language-menu summary').click();assert.ok(await page.locator('.language-options').evaluate(node=>node.scrollHeight>node.clientHeight));await page.locator('.language-options a[lang="zu"]').click();await page.waitForFunction(()=>document.documentElement.lang==='zu');
+  await page.locator('.language-menu summary').click();await page.locator('.language-options a[lang="ug"]').click();await page.waitForFunction(()=>document.documentElement.lang==='ug'&&document.documentElement.dir==='rtl');
+  await page.goto('http://127.0.0.1:32991/language?lang=zh-CN');
+  await page.goto('http://127.0.0.1:32991/account');await page.locator('form[action="/account/login"] input[name=email]').fill('ui@local.test');await page.locator('input[name=password]').fill('ui-test-password-123456');await page.locator('form[action="/account/login"] button').click();await page.goto('http://127.0.0.1:32991/admin/products/new');
+  await page.locator('#collection-search').fill('意甲');assert.ok(await page.locator('[data-choice-group]:visible').count()>0);await page.locator('#refresh-collections').click();await page.waitForFunction(()=>document.querySelector('#refresh-collections').textContent==='已刷新');assert.ok(await page.locator('[data-choice-group]:visible').count()>0);await page.locator('#collection-search').fill('');
+  assert.equal(await page.locator('#product-translation-language option').count(),languages.length-1);await page.locator('#product-translation-language').selectOption('ug');await page.locator('#product-translation-title').fill('ئۇيغۇرچە مەھسۇلات');await page.locator('#product-translation-language').selectOption('en');
+  await page.locator('#product-translation-title').fill('Browser translated jersey');await page.locator('#product-translation-description').fill('English product details');await page.locator('#product-translation-language').selectOption('ja');await page.locator('#product-translation-title').fill('ブラウザ翻訳ジャージ');await page.locator('#product-translation-language').selectOption('en');assert.equal(await page.locator('#product-translation-title').inputValue(),'Browser translated jersey');
+  await page.locator('[name="search_keywords"]').fill('运营搜索验收, 自定义球衣');
+  const payload=await page.evaluate(()=>{const c=document.createElement('canvas');c.width=120;c.height=60;c.getContext('2d').fillRect(0,0,120,60);return c.toDataURL().split(',')[1];});
+  const file={name:'wide.png',mimeType:'image/png',buffer:Buffer.from(payload,'base64')};
+  await page.locator('#product-image-files').setInputFiles(Array(12).fill(file));await page.waitForFunction(()=>document.querySelectorAll('.image-card-status').length===12 && [...document.querySelectorAll('.image-card-status')].every(i=>i.textContent==='已就绪'));
+  assert.equal(await page.locator('.product-image-card').count(),12);
+  await page.locator('.product-image-card').nth(2).locator('select').selectOption('scene');
+  await page.locator('.product-image-card').nth(2).dragTo(page.locator('.product-image-card').nth(4));
+  assert.equal(await page.locator('.product-image-card').nth(4).locator('select').inputValue(),'scene');
+  await page.locator('.product-image-card').nth(4).getByRole('button',{name:'前移',exact:true}).click();
+  assert.equal(await page.locator('.product-image-card').nth(3).locator('select').inputValue(),'scene');
+  await page.locator('.product-image-card').first().getByRole('button',{name:'替换',exact:true}).click();
+  await page.locator('#replace-product-image').setInputFiles({...file,name:'replacement.png'});
+  await page.waitForFunction(()=>document.querySelector('.image-card-name').textContent==='replacement.png' && document.querySelector('.image-card-status').textContent==='已就绪');
+  await page.route('**/admin/media/upload',route=>route.fulfill({status:500,contentType:'application/json',body:JSON.stringify({error:'测试上传失败'})}),{times:1});
+  await page.locator('#product-image-files').setInputFiles({...file,name:'retry.png'});
+  await page.locator('.image-card-error').waitFor();
+  await page.locator('input[name=title]').fill('图片交互验收');await page.locator('input[name=slug]').fill('image-ui-qa');await page.locator('[data-field=sku]').fill('UI-QA');await page.locator('[data-field=label]').fill('默认');
+  await page.getByRole('button',{name:'保存商品',exact:true}).click();assert.match(await page.locator('#form-error').textContent(),/重试/);
+  await page.getByRole('button',{name:'重试',exact:true}).click();await page.waitForFunction(()=>!document.querySelector('.image-card-error') && [...document.querySelectorAll('.image-card-status')].every(i=>i.textContent==='已就绪'));
+  await page.locator('.product-image-card').last().getByRole('button',{name:'移除',exact:true}).click();
+  await page.locator('.product-image-card').nth(1).locator('select').selectOption('size');await page.locator('.product-image-card').nth(1).getByRole('button',{name:'设为主图'}).click();assert.equal(await page.locator('.image-card-role').first().textContent(),'主图');
+  for(let i=0;i<2;i++){await page.locator('#choose-product-media').click();await page.locator('.media-picker-item input').first().check();await page.locator('#confirm-product-media').click();}assert.equal(await page.locator('.product-image-card').count(),14);
+  await page.locator('.product-image-thumb').first().click();assert.equal(await page.locator('#product-image-preview').isVisible(),true);await page.getByRole('button',{name:'关闭预览'}).click();
+  await page.locator('.product-image-card').last().getByRole('button',{name:'移除',exact:true}).click();assert.equal(await page.locator('.product-image-card').count(),13);
+  await page.locator('input[name=title]').fill('图片交互验收');await page.locator('input[name=slug]').fill('image-ui-qa');await page.locator('[data-field=sku]').fill('UI-QA');await page.locator('[data-field=label]').fill('默认');await page.getByRole('button',{name:'保存商品',exact:true}).click();await page.waitForURL(/\/admin\/products\/\d+/);assert.equal(await page.locator('.product-image-card').count(),13);
+  await page.locator('#product-image-editor').screenshot({path:path.join(root,'docs/screenshots/product-images.png')});
+  await page.setViewportSize({width:390,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);await page.locator('#product-image-editor').screenshot({path:path.join(root,'docs/screenshots/product-images-mobile.png')});
+  await page.goto('http://127.0.0.1:32991/search?q='+encodeURIComponent('运营搜索验收'));assert.equal(await page.locator('.product-card').count(),1);assert.equal(await page.locator('.search-result-count').textContent(),'共 1 条结果');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+  await page.locator('.filters [name="sort"]').selectOption('title');await page.locator('.filters button').click();await page.waitForURL(/sort=title/);assert.equal(new URL(page.url()).searchParams.get('q'),'运营搜索验收');
+  await page.setViewportSize({width:1400,height:1000});await page.locator('.results-search input').fill('自定义球衣');await page.locator('.results-search button').click();await page.waitForURL(url=>url.searchParams.get('q')==='自定义球衣');assert.equal(await page.locator('.product-card').count(),1);
+  await page.setViewportSize({width:1400,height:1000});await page.goto('http://127.0.0.1:32991/products/image-ui-qa?lang=en');assert.equal(await page.locator('.product-info h1').textContent(),'Browser translated jersey');assert.equal(await page.locator('.plain-content').textContent(),'English product details');await page.locator('.language-menu summary').click();await page.screenshot({path:path.join(root,'docs/screenshots/language-selector.png')});
+  await page.goto('http://127.0.0.1:32991/products/image-ui-qa?lang=ug');assert.equal(await page.locator('.product-info h1').textContent(),'ئۇيغۇرچە مەھسۇلات');assert.equal(await page.locator('html').getAttribute('dir'),'rtl');
+  assert.deepEqual(errors,[]);console.log('PASS: 109 language choices, preference persistence, Vietnamese labels, scrolling to Zulu, Uyghur RTL and product translations, image controls, desktop/mobile layouts, no browser errors.');
+}finally{
+  if(browser)await browser.close();server.kill();if(server.exitCode===null)await new Promise(r=>server.once('exit',r));
+  const relative=path.relative(path.join(root,'tests'),dir);if(!relative.startsWith('.tmp-image-ui-')||relative.includes(path.sep))throw new Error('Invalid cleanup target');rmSync(dir,{recursive:true,force:true});
+}
+

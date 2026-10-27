@@ -1,0 +1,14 @@
+✔ public local suggestions validate country and expose no private addresses (1997.1979ms)
+✔ address validation preserves apartment, selected country and save preference on errors (249.0112ms)
+✔ successful account checkout remembers only validated shipping fields and preserves order snapshot (403.2169ms)
+✔ guest opt-in never writes account address; clear requires own session and CSRF (304.3858ms)
+✔ COD confirmation, copy and CSV retain apartment; shipping changes leave original order intact (126.6415ms)
+✔ unchecking account save on a later order removes saved default without changing historical orders (274.5533ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3561.705

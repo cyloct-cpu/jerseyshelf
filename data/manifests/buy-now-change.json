@@ -1,0 +1,48 @@
+{
+  "at": "2026-10-15T10:19:30.085Z",
+  "backup": "storage/backups/2026-10-15T10-02-15-372Z-before-buy-now/store.sqlite",
+  "tables": {
+    "products": {
+      "before": 4166,
+      "after": 4166,
+      "unchanged": true
+    },
+    "variants": {
+      "before": 23521,
+      "after": 23521,
+      "unchanged": true
+    },
+    "collections": {
+      "before": 138,
+      "after": 138,
+      "unchanged": true
+    },
+    "product_collections": {
+      "before": 9343,
+      "after": 9343,
+      "unchanged": true
+    },
+    "media": {
+      "before": 35019,
+      "after": 35019,
+      "unchanged": true
+    },
+    "orders": {
+      "before": 0,
+      "after": 0,
+      "unchanged": true
+    },
+    "order_items": {
+      "before": 0,
+      "after": 0,
+      "unchanged": true
+    }
+  },
+  "inventory": {
+    "products": 4166,
+    "purchasable": 0
+  },
+  "migration": 17,
+  "integrity": "ok",
+  "foreignKeyErrors": 0
+}

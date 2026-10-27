@@ -1,0 +1,16 @@
+✔ WhatsApp popup forms preserve same-origin POST and malformed origins return 403 instead of 500 (1738.452ms)
+✔ configuration is admin-only, protected by CSRF and origin; no credentials or merchant phone configured by default (186.3492ms)
+✔ floating, product and cart contact forms use fixed merchant, selected variant/customization and no fake order (207.9237ms)
+✔ checkout retains invalid fields, stores explicit permission and contact snapshot without sending (210.1197ms)
+✔ order contact requires full order permission; tracking-only authorization cannot retrieve private summary (241.3453ms)
+✔ admin previews editable customer message, correct order; opening chat does not mark deal or contact (97.5985ms)
+✔ webhook route skips browser session/CSRF only; signature and verification token are mandatory (238.4223ms)
+✔ permission revoke is admin/CSRF-protected and only affects the chosen customer number (87.3435ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3235.7634

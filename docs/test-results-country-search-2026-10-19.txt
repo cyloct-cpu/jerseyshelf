@@ -1,0 +1,35 @@
+✔ dual actions and independent direct checkout preserve the existing cart, including identical variants (7500.9598ms)
+✔ purchase identity prevents duplicate orders even with fresh submission keys and simultaneous requests (208.6053ms)
+✔ separate tabs retain selections and returning to the product restores quantity and customization (419.4202ms)
+✔ unavailable stock keeps the buy-now label visible but rejects checkout creation (191.3601ms)
+✔ quotes are bound to their checkout source, owner, lifetime and live prices (872.2599ms)
+✔ validation keeps form fields, renders inline errors, and country-aware postal requirements allow Gulf addresses (263.8777ms)
+✔ a direct purchase uses only its own quantity for promotions and free shipping (1876.173ms)
+✔ last-item competition does not oversell and cancellation restores inventory once (574.2806ms)
+✔ currency confirmation and zero/three decimal order totals work for direct purchases (466.0613ms)
+✔ login rotates the session and resumes the same checkout with the existing quote (525.7527ms)
+✔ COD setting affects only new orders; required phone/region and checkout messaging are enforced (6578.7838ms)
+✔ shipping confirmation preserves original address and export is authenticated, CSRF protected and formula safe (285.1478ms)
+✔ CSV backfill reports each row, dispatches unpaid confirmed COD, rejects unmatched rows, and safely skips duplicate replay (104.1031ms)
+✔ split shipment allocation enforces item quantities and COD total; signing never changes payment status (386.844ms)
+✔ remittance tracks gross, fee and net independently; partial amounts and replay never inflate paid balance (160.303ms)
+✔ refused and returned packages do not restore inventory before warehouse verification, and restock only happens once (261.2584ms)
+✔ unshipped COD cancellation restores inventory once and stale shipment warnings are visible (174.7361ms)
+✔ WhatsApp popup forms preserve same-origin POST and malformed origins return 403 instead of 500 (5514.2972ms)
+✔ configuration is admin-only, protected by CSRF and origin; no credentials or merchant phone configured by default (237.736ms)
+✔ floating, product and cart contact forms use fixed merchant, selected variant/customization and no fake order (233.605ms)
+✔ checkout retains invalid fields, stores explicit permission and contact snapshot without sending (278.2437ms)
+✔ order contact requires full order permission; tracking-only authorization cannot retrieve private summary (201.5785ms)
+✔ admin previews editable customer message, correct order; opening chat does not mark deal or contact (109.0443ms)
+✔ webhook route skips browser session/CSRF only; signature and verification token are mandatory (308.853ms)
+✔ permission revoke is admin/CSRF-protected and only affects the chosen customer number (146.3902ms)
+✔ frontend and admin WhatsApp popup forms retain noopener without suppressing Origin (33.7869ms)
+✔ order contact keeps stored settlement currency and amount instead of recalculating FX (145.9812ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13248.6625

@@ -1,0 +1,28 @@
+[Unit]
+Description=Update JerseyShelf image search index
+After=local-fs.target
+
+[Service]
+Type=oneshot
+User=jerseyshelf
+Group=jerseyshelf
+WorkingDirectory=/www/wwwroot/jerseyshelf
+EnvironmentFile=/etc/jerseyshelf.env
+Environment=IMAGE_SEARCH_THREADS=1
+Environment=OMP_NUM_THREADS=1
+Environment=OPENBLAS_NUM_THREADS=1
+ExecStart=/opt/jerseyshelf/image-search-venv/bin/python scripts/image-search/engine.py maintain
+Nice=15
+CPUQuota=80%
+MemoryHigh=600M
+MemoryMax=700M
+TasksMax=24
+StandardOutput=append:/www/wwwroot/jerseyshelf/storage/image-search/index-service.log
+StandardError=append:/www/wwwroot/jerseyshelf/storage/image-search/index-error.log
+TimeoutStartSec=infinity
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/www/wwwroot/jerseyshelf/storage/image-search

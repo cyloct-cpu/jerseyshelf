@@ -1,0 +1,1 @@
+ALTER TABLE products ADD COLUMN image_roles TEXT NOT NULL DEFAULT '[]';

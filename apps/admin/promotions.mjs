@@ -1,0 +1,6 @@
+import { csrf } from '../storefront/views.mjs';
+
+const row=t=>`<tr><td><input name="minimumQuantity" type="number" min="1" max="1000" required aria-label="最低件数" value="${t?.quantity??''}"></td><td><input name="discountAmount" type="number" min="0.01" max="9999999" step="0.01" required aria-label="优惠金额（USD）" value="${t?(t.amount/100).toFixed(2):''}"></td><td><button type="button" data-remove-tier>移除</button></td></tr>`;
+export function promotionEditor(config,ctx){
+  return `<section class="panel"><h2>满件优惠</h2><p>适用于全站商品，按购物车商品总件数自动满减，无需优惠码。多档取最高一档，可与免邮同时生效；减免上限为商品金额，不抵扣运费。</p><form action="/admin/promotions/save" method="post" class="stack" id="promotion-form">${csrf(ctx.session)}<label class="inline"><input type="checkbox" name="enabled" value="1" ${config.enabled?'checked':''}>启用满件优惠</label><table><thead><tr><th>最低商品件数</th><th>减免金额（USD / 订单）</th><th>操作</th></tr></thead><tbody data-promotion-tiers>${config.tiers.map(row).join('')}</tbody></table><template id="promotion-tier-template">${row()}</template><div class="actions"><button type="button" data-add-tier>＋ 新增档位</button><button class="button" type="submit">保存优惠</button></div><p class="muted">最多 10 档，件数不能重复，减免金额随件数递增。顾客选择其它货币时自动换算；历史订单保留当时的优惠和金额。</p></form></section><script src="/assets/promotions.js" defer></script>`;
+}

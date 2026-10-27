@@ -1,0 +1,10 @@
+[
+  {
+    "device": "mobile",
+    "dragAndEdgeSnap": true,
+    "refreshRestores": true,
+    "noAccidentalNavigation": true,
+    "actualWhatsappPage": "https://api.whatsapp.com/send/?phone=8613247374144&text=%E6%82%A8%E5%A5%BD%EF%BC%8C%E6%88%91%E6%83%B3%E5%92%A8%E8%AF%A2%E5%95%86%E5%93%81%E3%80%82&type=phone_number&app_absent=0",
+    "pageErrors": []
+  }
+]

@@ -1,0 +1,40 @@
+{
+  "backup": "storage/backups/2026-10-15T06-19-37Z-before-product-heat",
+  "protectedHashes": {
+    "apps/api/traffic.mjs": "2c0f4403bf20d116322d78ff4368c348febc6799180e06a93dd5d8c10280d45a",
+    "apps/admin/traffic.mjs": "d1b163064d4965a0a7da47223e65867a037b4b3cfddbd40686bd6ac9b5d2b02f",
+    "apps/storefront/public/store.js": "67dbedc24ad7aef8ba9cd02bfc271c3974b4598fef34ea3c91e1f8e85f14f60e",
+    "database/migrations/011-traffic-analytics.sql": "cf289a49284d4f6eb15f10fe8a5d86c49352c674e313875df162650fac32198d"
+  },
+  "verification": {
+    "at": "2026-10-15T06:32:24.177680+00:00",
+    "protectedUnchanged": {
+      "apps/api/traffic.mjs": true,
+      "apps/admin/traffic.mjs": true,
+      "apps/storefront/public/store.js": true,
+      "database/migrations/011-traffic-analytics.sql": true
+    },
+    "tests": {
+      "total": 50,
+      "passed": 50,
+      "failed": 0,
+      "report": "docs/test-results-product-heat.txt"
+    },
+    "browser": {
+      "refreshPreserved": {
+        "before": 366,
+        "after": 366
+      },
+      "observedChanges": [
+        366,
+        356,
+        353,
+        354
+      ],
+      "mobileViewport": 390,
+      "mobileClientWidth": 375,
+      "mobileOverflow": false
+    },
+    "databaseMigrationAdded": false
+  }
+}

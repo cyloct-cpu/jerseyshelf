@@ -1,0 +1,16 @@
+{
+  "base": "https://jerseyshelf.com",
+  "results": [
+    "desktop floating: pass",
+    "desktop product variant + quantity + customization: pass",
+    "desktop cart: pass",
+    "desktop direct URL: pass",
+    "desktop no browser errors: pass",
+    "mobile floating: pass",
+    "mobile product variant + quantity + customization: pass",
+    "mobile cart: pass",
+    "mobile direct URL: pass",
+    "mobile no browser errors: pass"
+  ],
+  "externalNavigation": "Captured at wa.me; no message sent"
+}

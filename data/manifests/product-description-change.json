@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-15",
+  "scope": "All existing and future products via shared detail renderer",
+  "existingProducts": 4166,
+  "whatsappNumber": "",
+  "template": "apps/storefront/product-description.mjs",
+  "assets": [
+    {
+      "name": "partners.png",
+      "width": 644,
+      "height": 409,
+      "alt": "全球配送及合作伙伴示意图",
+      "file": "apps/storefront/public/product-description/partners.png",
+      "source": "https://img.staticdj.com/fd957ee0d10c163f020ff0b8d4e9febc.png",
+      "bytes": 267582,
+      "sha256": "07dd301d49252444382bafc2716984f7f57df5e6de8714f819939a2605076b54"
+    },
+    {
+      "name": "delivery.webp",
+      "width": 720,
+      "height": 175,
+      "alt": "美国运营、快速配送与满意保证",
+      "file": "apps/storefront/public/product-description/delivery.webp",
+      "source": "https://img.staticdj.com/dc2ab43b2f308ae980e3e561f4a74297.png",
+      "bytes": 10810,
+      "sha256": "e76530ae599a90b82f71c1bdbefad307abc5936bd7a3baad7c7aabfb3b9b7d99"
+    },
+    {
+      "name": "guarantees.webp",
+      "width": 474,
+      "height": 102,
+      "alt": "安全交易、30 天退款、满意保证与便捷退货",
+      "file": "apps/storefront/public/product-description/guarantees.webp",
+      "source": "https://img.staticdj.com/f67bc29bfca00db6839e50393bde94f9.png",
+      "bytes": 9722,
+      "sha256": "9af511f024da03f5f27e566c6ae07b617a1976c9828e637c4c73286fb64a36a5"
+    },
+    {
+      "name": "warehouse.png",
+      "width": 626,
+      "height": 497,
+      "alt": "我们的团队与仓库",
+      "file": "apps/storefront/public/product-description/warehouse.png",
+      "source": "https://img.staticdj.com/91c2f93ef8f5b5ff8726fe827c0280b8.png",
+      "bytes": 429799,
+      "sha256": "90ef86f3d36570c228e190bf1a2fa72d4b6fad548f386143739fac0f884535de"
+    }
+  ],
+  "verification": {
+    "fullSuite": {
+      "passed": 44,
+      "failed": 0
+    },
+    "updatedStoreSuite": {
+      "passed": 28,
+      "failed": 0
+    },
+    "desktopScreenshot": "data/verification/product-description/desktop.jpg",
+    "mobileScreenshot": "data/verification/product-description/mobile.jpg",
+    "mobileViewport": 390,
+    "mobileImageWidth": 317,
+    "localAssetsLoaded": 4
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "source": "https://www.chenyikan.shop/",
+  "status": "catalog-and-product-images-complete",
+  "updatedAt": "2026-10-14T10:52:02.370Z",
+  "sourceSnapshot": "data/source/shoplazza-2026-10-14",
+  "collectionReportedCount": {
+    "2026-27-season": 1406
+  },
+  "totalProducts": 4166,
+  "totalCollections": 138,
+  "imageUrls": 35025,
+  "downloadedImages": 35018,
+  "productsWithoutImages": 0,
+  "completeCatalog": true,
+  "imageVerification": true,
+  "pixelVerification": false,
+  "failures": [],
+  "notes": "Public product sitemap and all 138 collection memberships verified. Original product galleries and captured homepage images stored locally. Full policy/blog content and overall pixel parity are not yet verified. Server deployment deferred."
+}

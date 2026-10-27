@@ -1,0 +1,46 @@
+import {db} from '../api/db.mjs';
+import {escape as e} from '../api/security.mjs';
+import {centerTabs,centerFilters,centerSelection,centerData,centerStats,selectedCenterRows,} from '../api/order-center.mjs';
+import {serviceStates,serviceKinds,followStates,serviceRules,serviceCase} from '../api/aftersales.mjs';
+import {codSummary} from '../api/cod.mjs';
+import {formatMinor} from '../../packages/contracts/currencies.mjs';
+import {orderManagement,codPanel} from './cod.mjs';
+import {serviceOrderPanel,serviceDetail} from './aftersales.mjs';
+import {shipmentPanel} from './shipments.mjs';
+import {externalOrderActions,receiptEditor} from './customers.mjs';
+import {waOrderPanel} from './whatsapp.mjs';
+import {orderBody,csrf} from '../storefront/views.mjs';
+import {InputError} from '../../packages/contracts/validation.mjs';
+const detailTabs={overview:'商品与客户',follow:'跟进与确认',shipping:'包裹与物流',money:'代收与回款',aftersales:'售后处理',history:'操作历史'};
+const link=(tab,filter='all')=>'/admin/orders?tab='+tab+'&filter='+filter;
+export function centerMetrics(rows){const s=centerStats(rows);return `<section class="panel"><h2>订单待办</h2><p class="muted">每15秒更新数量。各项可能涉及同一订单，不相加作为总订单数；售后按申请单计数。</p><div class="order-center-metrics">${[['confirm','待确认','follow','all'],['today','今日跟进','follow','today'],['dispatch','待发货','shipping','dispatch'],['exception','物流异常','shipping','exception'],['remittance','待回款','money','remittance'],['aftersales','售后待处理','aftersales','all']].map(([k,n,t,f])=>`<a href="${link(t,f)}">${n}<strong data-center-count="${k}">${s[k]}</strong></a>`).join('')}</div></section>`;}
+function filterForm(ctx,selection){return `<form method="get" action="/admin/orders" class="order-center-filter"><input type="hidden" name="tab" value="${selection.tab}"><input name="q" value="${e(selection.q)}" aria-label="搜索订单或售后" placeholder="订单号、客户、邮箱、运单"><select name="filter" aria-label="筛选状态">${Object.entries(centerFilters[selection.tab]).map(([k,n])=>`<option value="${k}" ${k===selection.filter?'selected':''}>${n}</option>`).join('')}</select><button>筛选</button></form>`;}
+function rules(ctx){const s=serviceRules();return `<details class="panel"><summary>跟进与退货审核规则</summary><p>0天表示人工审核期限，不向客户承诺固定退货天数。</p><form action="/admin/service/rules" method="post" class="stack">${csrf(ctx.session)}<label>新订单跟进间隔（小时）<input name="follow_hours" type="number" min="1" max="720" value="${s.followHours}" required></label><label>申请期限（天，0为人工审核）<input name="return_days" type="number" min="0" max="365" value="${s.returnDays}" required></label><label>定制费<select name="custom_policy"><option value="manual" ${s.customPolicy==='manual'?'selected':''}>人工审核</option><option value="exclude" ${s.customPolicy==='exclude'?'selected':''}>排除定制费用</option></select></label><label>运费<select name="shipping_policy"><option value="manual" ${s.shippingPolicy==='manual'?'selected':''}>人工审核</option><option value="exclude" ${s.shippingPolicy==='exclude'?'selected':''}>不退运费</option></select></label><button>保存审核规则</button></form></details>`;}
+export function centerPage(ctx){
+ const selection=centerSelection(ctx.url),rows=centerData(),chosen=selectedCenterRows(rows,selection);
+ const tabs=`<nav class="order-center-tabs" aria-label="订单中心标签">${Object.entries(centerTabs).map(([k,n])=>`<a href="${link(k)}" ${k===selection.tab?'aria-current="page"':''}>${n}</a>`).join('')}</nav>`;
+ let content;
+ if(selection.tab==='follow')content=`<section class="panel"><h2>待确认与跟进</h2>${filterForm(ctx,selection)}<p>核实资料和代收金额后才进入发货；未付款不会自动取消货到付款订单。</p><div class="table-wrap"><table><thead><tr><th>订单 / 客户</th><th>负责人 / 联系进度</th><th>联系结果</th><th>下次跟进</th><th>处理</th></tr></thead><tbody>${chosen.slice(0,500).map(o=>`<tr><td>${e(o.id)}<small>${e(o.customer_name)} · ${e(o.email)}</small></td><td>${e(o.follow?.owner||'待分配')}<small>${e(followStates[o.follow?.stage]||'待首次联系')}</small></td><td>${e(o.follow?.result||'尚未记录联系结果')}</td><td>${e(o.follow?.next_at||'待安排')}${o.flags.today?' · 今日/逾期':''}</td><td><a href="/admin/orders/${e(o.id)}?section=follow">跟进并确认资料</a></td></tr>`).join('')||'<tr><td colspan="5">暂无待确认订单</td></tr>'}</tbody></table></div></section>${rules(ctx)}`;
+ else if(selection.tab==='aftersales'){
+  const states={review:['review'],returns:['waiting_return','returning','inspecting'],refunds:['refund_pending'],replacements:['replacement_pending'],completed:['completed','rejected']};
+  const cases=rows.flatMap(o=>o.cases.map(c=>({...c,customer_name:o.customer_name,email:o.email}))).filter(c=>(!states[selection.filter]||states[selection.filter].includes(c.status))&&(!selection.q||[c.id,c.order_id,c.customer_name,c.email,c.reason].some(v=>String(v).toLowerCase().includes(selection.q))));
+  content=`<section class="panel"><h2>售后处理</h2>${filterForm(ctx,selection)}<p>从订单详情创建商品售后或代收多收退款，所有申请继续关联原订单。</p><div class="table-wrap"><table><thead><tr><th>申请 / 订单</th><th>客户 / 负责人</th><th>类型 / 状态</th><th>审核退款</th><th>处理</th></tr></thead><tbody>${cases.slice(0,500).map(c=>`<tr><td>#${c.id}<small>${e(c.order_id)}</small></td><td>${e(c.customer_name)}<small>${e(c.owner||'待分配')}</small></td><td>${e(serviceKinds[c.kind])}<small>${e(serviceStates[c.status])}</small></td><td>${e(formatMinor(c.approved_amount,c.currency))}</td><td><a href="/admin/orders/${e(c.order_id)}?section=aftersales&amp;case=${c.id}">打开售后申请</a></td></tr>`).join('')||'<tr><td colspan="5">暂无符合条件的售后申请</td></tr>'}</tbody></table></div></section>${rules(ctx)}`;
+ }else {const tableCtx={...ctx,url:new URL(ctx.url)};tableCtx.url.searchParams.set('filter',selection.filter);content=orderManagement(tableCtx,{rows:chosen,tab:selection.tab,filterOptions:centerFilters[selection.tab]});}
+ return `${centerMetrics(rows)}${tabs}${content}`;
+}
+function testActions(o,ctx){return `<section class="panel"><h2>测试订单处理</h2><form action="/admin/orders/update" method="post" class="stack">${csrf(ctx.session)}<input type="hidden" name="id" value="${e(o.id)}"><label>物流单号<input name="tracking" value="${e(o.tracking)}" maxlength="150"></label><div class="actions">${o.payment_status==='unpaid'&&o.fulfillment_status==='pending'?'<button name="action" value="test-pay">模拟付款</button><button name="action" value="cancel">取消并恢复库存</button>':''}${o.payment_status==='test_paid'&&o.fulfillment_status==='pending'?'<button name="action" value="ship">标记发货</button><button name="action" value="test-refund">模拟退款</button>':''}</div></form></section>`;}
+function history(o){const entries=[...db.prepare('SELECT kind,body,occurred_at,actor_id FROM service_events WHERE order_id=?').all(o.id),...db.prepare('SELECT kind,body,occurred_at,actor_id FROM cod_events WHERE order_id=?').all(o.id),...db.prepare("SELECT '包裹更正' kind,c.before_json||' → '||c.after_json body,c.created_at occurred_at,c.actor_id FROM shipment_changes c JOIN shipments s ON s.id=c.shipment_id WHERE s.order_id=?").all(o.id),...db.prepare("SELECT kind,method||' / '||reference||' / '||currency||' '||amount body,occurred_at,actor_id FROM order_receipts WHERE order_id=?").all(o.id)].sort((a,b)=>Date.parse(b.occurred_at)-Date.parse(a.occurred_at));return `<section class="panel"><h2>订单操作历史</h2>${entries.slice(0,500).map(v=>`<details><summary>${e(v.occurred_at)} · ${e(v.kind)} · ${e(db.prepare('SELECT name FROM users WHERE id=?').get(v.actor_id)?.name||'系统')}</summary><pre class="order-history-body">${e(v.body)}</pre></details>`).join('')||'<p>暂无操作记录</p>'}</section>`;}
+export function centerDetail(o,ctx){
+ let section=ctx.url.searchParams.get('section')||'overview';if(!Object.hasOwn(detailTabs,section))section='overview';const cod=o.payment_method==='cod';
+ const tabs=`<nav class="order-center-tabs" aria-label="订单详情标签">${Object.entries(detailTabs).map(([k,n])=>`<a href="/admin/orders/${e(o.id)}?section=${k}" ${section===k?'aria-current="page"':''}>${n}</a>`).join('')}</nav>`;
+ let content;
+ if(section==='overview')content=`<section class="panel">${orderBody(o)}${cod?`<p><strong>${e(codSummary(o).label)}</strong></p>`:''}<a class="button" href="/admin/orders/${e(o.id)}?section=${o.fulfillment_status==='pending'?'follow':'shipping'}">继续处理订单</a></section>`;
+ if(section==='follow')content=serviceOrderPanel(o,ctx,{part:'follow'})+(cod?codPanel(o,ctx,{part:'address'}):'<section class="panel"><p>请核对商品与客户资料，预先付款订单仍需核实到账后发货。</p></section>')+waOrderPanel(o,ctx);
+ if(section==='shipping')content=(cod?codPanel(o,ctx,{part:'shipping'}):o.order_kind==='external'?externalOrderActions(o,ctx,{part:'shipping'}):testActions(o,ctx))+shipmentPanel(o,ctx)+waOrderPanel(o,ctx)+(cod&&o.fulfillment_status==='pending'?`<section class="panel"><p>请先在<a href="/admin/orders/${e(o.id)}?section=follow">跟进与确认</a>核实资料，再在本页登记首个发货运单。</p></section>`:'');
+ if(section==='money')content=cod?serviceOrderPanel(o,ctx,{part:'money'})+codPanel(o,ctx,{part:'money'}):receiptEditor(o,ctx)||'<section class="panel"><p>测试订单不登记真实收款。</p></section>';
+ if(section==='aftersales'){
+  content=serviceOrderPanel(o,ctx,{part:'aftersales'});const caseId=ctx.url.searchParams.get('case');if(caseId){const c=serviceCase(caseId);if(c.order_id!==o.id)throw new InputError('售后申请不属于此订单',404);content+=serviceDetail(caseId,ctx);}if(!content)content='<section class="panel"><p>测试订单不创建实际商品售后。</p></section>';
+ }
+ if(section==='history')content=history(o);
+ return `<p><a href="/admin/orders">← 订单中心</a> · <span translate="no">${e(o.id)}</span></p>${tabs}${content}`;
+}

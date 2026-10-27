@@ -1,0 +1,18 @@
+✔ dual actions and independent direct checkout preserve the existing cart, including identical variants (2232.1569ms)
+✔ purchase identity prevents duplicate orders even with fresh submission keys and simultaneous requests (189.5111ms)
+✔ separate tabs retain selections and returning to the product restores quantity and customization (405.1692ms)
+✔ unavailable stock keeps the buy-now label visible but rejects checkout creation (169.1372ms)
+✔ quotes are bound to their checkout source, owner, lifetime and live prices (758.3015ms)
+✔ validation keeps form fields, renders inline errors, and country-aware postal requirements allow Gulf addresses (208.9297ms)
+✔ a direct purchase uses only its own quantity for promotions and free shipping (1840.2989ms)
+✔ last-item competition does not oversell and cancellation restores inventory once (492.2236ms)
+✔ currency confirmation and zero/three decimal order totals work for direct purchases (433.8947ms)
+✔ login rotates the session and resumes the same checkout with the existing quote (485.897ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7438.4754

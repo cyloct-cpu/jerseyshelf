@@ -1,0 +1,11 @@
+[Unit]
+Description=Check JerseyShelf image catalog changes every five minutes
+
+[Timer]
+OnBootSec=5min
+OnUnitInactiveSec=5min
+Persistent=true
+Unit=jerseyshelf-image-index.service
+
+[Install]
+WantedBy=timers.target

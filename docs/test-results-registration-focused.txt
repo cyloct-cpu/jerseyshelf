@@ -1,0 +1,22 @@
+✔ register page and account menu expose optional contact/marketing, defaults unchecked, English fully translated (1762.3263ms)
+✔ invalid registration retains non-sensitive fields and checkout return, never password, and saves nothing (44.6492ms)
+✔ registration atomically creates account, CRM, exact phone consent and one task without sending (142.0458ms)
+✔ duplicate email shows login hint and cannot overwrite customer, permission or duplicate task (63.7924ms)
+✔ email-only and unconsented-number registrations succeed and enter separate CRM filters (419.1974ms)
+✔ contact click records link-open only, targets merchant, does not become connected or expose private email (84.6963ms)
+✔ account mutations are owner-bound, CSRF protected and cannot change email/target user (125.5738ms)
+✔ new number revokes old registration scope, requires fresh confirmation, preserves manual CRM fields and order permissions (174.6758ms)
+✔ withdrawal and email unsubscribe persist; repeated save does not duplicate permission events (113.8754ms)
+✔ clearing number removes the automatic CRM phone and never re-grants an old phone (49.5256ms)
+✔ admin can revoke precise consent but cannot grant or alter another customer using a mismatched record (150.0698ms)
+✔ signed STOP revokes registration and order phone permissions without erasing history (202.498ms)
+✔ historical backfill is idempotent, preserves manual data, labels consent unknown and email unverified (444.094ms)
+✔ registering a guest email only links CRM, never claims historical order ownership (284.5589ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4257.9666

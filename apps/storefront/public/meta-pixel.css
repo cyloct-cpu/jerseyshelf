@@ -1,0 +1,13 @@
+/* Meta 广告 Cookie 选择面板与入口按钮。设计令牌与 store.css 保持一致。 */
+#meta-consent-panel{position:fixed;left:16px;bottom:16px;z-index:60;max-width:420px;background:#fff;border:1px solid var(--line,#e6e6e6);box-shadow:0 8px 25px #0002;padding:18px 20px;font-size:13px;line-height:1.6}
+#meta-consent-panel[hidden]{display:none}
+#meta-consent-panel strong{display:block;margin-bottom:6px;font-size:14px}
+#meta-consent-panel p{margin:8px 0;color:var(--ink,#181818)}
+#meta-consent-status{min-height:1em;color:var(--muted,#777)}
+.meta-consent-actions{display:flex;gap:10px;margin-top:12px}
+.meta-consent-actions button{flex:1;padding:9px 12px}
+.meta-consent-actions button[data-meta-consent="accepted"]{background:#181818;border-color:#181818;color:#fff}
+.meta-consent-actions button[data-meta-consent="accepted"]:hover{background:#333;border-color:#333}
+#meta-consent-preferences{position:fixed;left:16px;bottom:16px;z-index:59;background:#fff;border:1px solid var(--line,#e6e6e6);padding:7px 12px;font-size:12px;color:var(--muted,#777)}
+#meta-consent-panel:not([hidden])~#meta-consent-preferences{display:none}
+@media (max-width:600px){#meta-consent-panel{left:10px;right:10px;bottom:10px;max-width:none}}

@@ -1,0 +1,14 @@
+{
+  "source": "https://www.chenyikan.shop/",
+  "startedAt": "2026-10-13T15:06:25.337Z",
+  "pages": [],
+  "assets": [],
+  "failures": [
+    {
+      "url": "https://www.chenyikan.shop/",
+      "error": "fetch failed"
+    }
+  ],
+  "complete": false,
+  "finishedAt": "2026-10-13T15:06:25.408Z"
+}

@@ -1,0 +1,21 @@
+{
+  "sourceProducts": 4166,
+  "sourceCollections": 138,
+  "imageUrls": 35025,
+  "downloadFailures": 0,
+  "missingOriginalFiles": [],
+  "missingLocalFiles": [],
+  "galleryMissing": [],
+  "galleryOrderDifferences": [],
+  "collectionDifferences": [],
+  "unmappedProducts": [],
+  "missingSitemapProducts": [],
+  "uniqueSourceImages": 35018,
+  "originalImageBytes": 34925289693,
+  "totalLocalProducts": 4166,
+  "uniqueMediaFiles": 35018,
+  "productsWithoutImages": 0,
+  "seasonProducts": 1406,
+  "ok": true,
+  "verifiedAt": "2026-10-14T10:52:02.370Z"
+}

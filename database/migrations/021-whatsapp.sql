@@ -1,0 +1,10 @@
+ALTER TABLE orders ADD COLUMN whatsapp_phone TEXT NOT NULL DEFAULT '';
+ALTER TABLE orders ADD COLUMN whatsapp_locale TEXT NOT NULL DEFAULT 'en';
+ALTER TABLE orders ADD COLUMN whatsapp_consent INTEGER NOT NULL DEFAULT 0 CHECK(whatsapp_consent IN(0,1));
+CREATE TABLE whatsapp_permissions(customer_id INTEGER NOT NULL REFERENCES customers(id),phone TEXT NOT NULL,granted INTEGER NOT NULL DEFAULT 0,source TEXT NOT NULL,updated_at TEXT NOT NULL,PRIMARY KEY(customer_id,phone));
+CREATE TABLE whatsapp_messages(id TEXT PRIMARY KEY,customer_id INTEGER REFERENCES customers(id),order_id TEXT REFERENCES orders(id),phone TEXT NOT NULL,direction TEXT NOT NULL CHECK(direction IN('out','in')),kind TEXT NOT NULL,status TEXT NOT NULL,body TEXT NOT NULL DEFAULT '',payload TEXT NOT NULL DEFAULT '{}',platform_id TEXT UNIQUE,dedupe_key TEXT UNIQUE,last_error TEXT NOT NULL DEFAULT '',attempts INTEGER NOT NULL DEFAULT 0,next_attempt INTEGER NOT NULL DEFAULT 0,actor_id INTEGER REFERENCES users(id),created_at TEXT NOT NULL,updated_at TEXT NOT NULL);
+CREATE TABLE whatsapp_webhook_events(hash TEXT PRIMARY KEY,created_at TEXT NOT NULL);
+CREATE TABLE whatsapp_receipts(platform_id TEXT PRIMARY KEY,phone TEXT NOT NULL,status TEXT NOT NULL,updated_at TEXT NOT NULL);
+CREATE INDEX idx_wa_messages_queue ON whatsapp_messages(status,next_attempt);
+CREATE INDEX idx_wa_messages_customer ON whatsapp_messages(customer_id,created_at);
+CREATE INDEX idx_wa_permissions_phone ON whatsapp_permissions(phone,granted);

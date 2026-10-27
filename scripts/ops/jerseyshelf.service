@@ -1,0 +1,22 @@
+[Unit]
+Description=JerseyShelf storefront
+After=network.target
+
+[Service]
+Type=simple
+User=jerseyshelf
+Group=jerseyshelf
+WorkingDirectory=/www/wwwroot/jerseyshelf
+EnvironmentFile=/etc/jerseyshelf.env
+ExecStart=/opt/jerseyshelf/node-v24.22.0-linux-x64/bin/node apps/api/server.mjs
+Restart=on-failure
+RestartSec=5
+UMask=0027
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/www/wwwroot/jerseyshelf/storage
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,10 @@
+ALTER TABLE orders ADD COLUMN fx_rate TEXT NOT NULL DEFAULT '1';
+ALTER TABLE orders ADD COLUMN fx_date TEXT NOT NULL DEFAULT '';
+ALTER TABLE orders ADD COLUMN fx_source TEXT NOT NULL DEFAULT 'USD';
+ALTER TABLE orders ADD COLUMN base_subtotal INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE orders ADD COLUMN base_shipping INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE orders ADD COLUMN base_total INTEGER NOT NULL DEFAULT 0;
+UPDATE orders SET base_subtotal=subtotal,base_shipping=shipping,base_total=total;
+ALTER TABLE order_items ADD COLUMN base_unit_price INTEGER NOT NULL DEFAULT 0;
+UPDATE order_items SET base_unit_price=unit_price;
+CREATE TABLE checkout_quotes(id TEXT PRIMARY KEY,session_hash TEXT NOT NULL,cart_hash TEXT NOT NULL,fx TEXT NOT NULL,expires INTEGER NOT NULL);

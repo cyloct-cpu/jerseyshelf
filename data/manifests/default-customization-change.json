@@ -1,0 +1,48 @@
+{
+  "databaseBackup": "E:\\独立站\\storage\\backups\\2026-10-15T05-16-46.977Z-before-default-customization",
+  "mediaCopied": false,
+  "createdAt": "2026-10-15T05:16:47.662Z",
+  "products": 4166,
+  "configured": [
+    {
+      "id": 1,
+      "title": "2026-27赛季拜仁慕尼黑客场球衣 - 球迷版"
+    }
+  ],
+  "protectedHashes": {
+    "products": "e9266289ed850c7a89084390815c96686a8ff5035f132fe2fc68b4dc285e98bf",
+    "variants": "3d202380f78fed677306311a8aec6b025abf5d3311d93ebfd97f6696a18d00c1",
+    "orderItems": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  "ambiguousCollections": 1,
+  "result": {
+    "verifiedAt": "2026-10-15T05:32:37.332Z",
+    "products": 4166,
+    "printingEnabled": 4166,
+    "patchesEnabled": 4166,
+    "modes": {
+      "inherit": 4165,
+      "custom": 1
+    },
+    "templates": {
+      "club": 3081,
+      "national": 1084,
+      "custom": 1
+    },
+    "missingImages": [],
+    "preservedHashes": {
+      "products": true,
+      "variants": true,
+      "orderItems": true
+    },
+    "integrity": "ok",
+    "foreignKeyErrors": 0,
+    "ok": true
+  },
+  "testsPassed": 38,
+  "screenshots": [
+    "docs/screenshots/default-customization-windbreaker.png",
+    "docs/screenshots/admin-new-product-customization.png",
+    "docs/screenshots/admin-customization-templates.png"
+  ]
+}

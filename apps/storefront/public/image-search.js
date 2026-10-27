@@ -1,0 +1,30 @@
+(()=>{
+ const panel=document.getElementById('image-search-panel');if(!panel)return;
+ const $=id=>document.getElementById(id),file=$('image-search-file'),editor=$('image-editor'),canvas=$('image-crop-canvas'),ctx=canvas.getContext('2d'),status=$('image-search-status'),submit=$('image-search-submit');
+ const sliders=['left','top','width','height'].map(k=>$('crop-'+k));
+ let image=null,rect={x:0,y:0,w:1,h:1},drag=null,controller=null,previewUrl=null,selection=0;
+ const message=(value,error=false)=>{status.textContent=value;status.classList.toggle('error',error);};
+ function draw(){if(!image)return;ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(image,0,0,canvas.width,canvas.height);const x=rect.x*canvas.width,y=rect.y*canvas.height,w=rect.w*canvas.width,h=rect.h*canvas.height;ctx.fillStyle='#0007';ctx.fillRect(0,0,canvas.width,y);ctx.fillRect(0,y+h,canvas.width,canvas.height-y-h);ctx.fillRect(0,y,x,h);ctx.fillRect(x+w,y,canvas.width-x-w,h);ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.strokeRect(x,y,w,h);[rect.x,rect.y,rect.w,rect.h].forEach((n,i)=>sliders[i].value=Math.round(n*100));}
+ function all(){rect={x:0,y:0,w:1,h:1};draw();}
+ async function choose(blob){const sequence=++selection;controller?.abort();if(!['image/jpeg','image/png','image/webp'].includes(blob.type)||blob.size>8*1024*1024){message(panel.dataset.invalid,true);return;}let bitmap;
+  try{bitmap=await createImageBitmap(blob,{imageOrientation:'from-image'});if(sequence!==selection){bitmap.close();return;}if(bitmap.width*bitmap.height>20000000){bitmap.close();message(panel.dataset.large,true);return;}if(Math.min(bitmap.width,bitmap.height)<32){bitmap.close();message(panel.dataset.invalid,true);return;}image?.close();image=bitmap;const scale=Math.min(1,900/bitmap.width,550/bitmap.height);canvas.width=Math.round(bitmap.width*scale);canvas.height=Math.round(bitmap.height*scale);editor.hidden=false;$('image-query-preview').hidden=true;all();message(panel.dataset.ready);}
+  catch{message(panel.dataset.invalid,true);}
+ }
+ file.addEventListener('change',()=>{if(file.files[0])choose(file.files[0]);});
+ const zone=$('image-dropzone');['dragenter','dragover'].forEach(name=>zone.addEventListener(name,event=>{event.preventDefault();zone.classList.add('dragging');}));zone.addEventListener('dragleave',()=>zone.classList.remove('dragging'));zone.addEventListener('drop',event=>{event.preventDefault();zone.classList.remove('dragging');if(event.dataTransfer.files[0])choose(event.dataTransfer.files[0]);});
+ document.addEventListener('paste',event=>{const item=Array.from(event.clipboardData?.items||[]).find(i=>i.type.startsWith('image/'));if(item){event.preventDefault();choose(item.getAsFile());}});
+ function point(event){const bounds=canvas.getBoundingClientRect();return {x:Math.max(0,Math.min(1,(event.clientX-bounds.left)/bounds.width)),y:Math.max(0,Math.min(1,(event.clientY-bounds.top)/bounds.height))};}
+ canvas.addEventListener('pointerdown',event=>{if(!image)return;drag=point(event);canvas.setPointerCapture(event.pointerId);});
+ canvas.addEventListener('pointermove',event=>{if(!drag)return;const p=point(event);rect={x:Math.min(drag.x,p.x),y:Math.min(drag.y,p.y),w:Math.abs(p.x-drag.x),h:Math.abs(p.y-drag.y)};draw();});
+ canvas.addEventListener('pointerup',()=>{drag=null;});canvas.addEventListener('pointercancel',()=>{drag=null;});
+ sliders.forEach(s=>s.addEventListener('input',()=>{const [x,y,w,h]=sliders.map(s=>Number(s.value)/100);rect={x,y,w:Math.min(w,1-x),h:Math.min(h,1-y)};draw();}));$('image-use-all').addEventListener('click',all);
+ $('image-search-cancel').addEventListener('click',()=>{selection++;controller?.abort();image?.close();image=null;editor.hidden=true;file.value='';message('');});
+ async function encode(max){const output=document.createElement('canvas'),w=image.width*rect.w,h=image.height*rect.h,scale=Math.min(1,max/Math.max(w,h));output.width=Math.max(1,Math.round(w*scale));output.height=Math.max(1,Math.round(h*scale));output.getContext('2d').drawImage(image,image.width*rect.x,image.height*rect.y,w,h,0,0,output.width,output.height);return new Promise(resolve=>output.toBlob(resolve,'image/jpeg',.92));}
+ submit.addEventListener('click',async()=>{if(!image)return;if(rect.w*image.width<32||rect.h*image.height<32){message(panel.dataset.crop,true);return;}submit.disabled=true;controller=new AbortController();const current=selection;const timer=setTimeout(()=>controller.abort(),45000);message(panel.dataset.busy);
+  try{const blob=await encode(1600),thumb=await encode(160);const response=await fetch('/api/image-search'+(panel.dataset.preview==='1'?'?preview=1':''),{method:'POST',headers:{'Content-Type':'image/jpeg','Accept':'application/json','X-CSRF-Token':panel.dataset.csrf},body:blob,signal:controller.signal});const data=await response.json();if(current!==selection)return;if(!response.ok)throw new Error(data.error||panel.dataset.failed);const reader=new FileReader();reader.onload=()=>{try{sessionStorage.setItem('image-search-preview',JSON.stringify({id:data.id,data:reader.result,expires:Date.now()+1800000}));}catch{}location.assign('/search?image='+encodeURIComponent(data.id));};reader.readAsDataURL(thumb);}
+  catch(err){if(current===selection)message(document.documentElement.lang==='zh-CN'&&err.name!=='AbortError'?err.message:panel.dataset.failed,true);}
+  finally{clearTimeout(timer);submit.disabled=false;}
+ });
+ if(panel.dataset.imageQuery){try{const saved=JSON.parse(sessionStorage.getItem('image-search-preview'));if(saved?.id===panel.dataset.imageQuery&&saved.expires>Date.now()&&saved.data.startsWith('data:image/jpeg;base64,')){const bytes=Uint8Array.from(atob(saved.data.split(',')[1]),c=>c.charCodeAt(0));previewUrl=URL.createObjectURL(new Blob([bytes],{type:'image/jpeg'}));$('image-query-thumb').src=previewUrl;$('image-query-thumb').hidden=false;}else sessionStorage.removeItem('image-search-preview');}catch{}}
+ window.addEventListener('pagehide',()=>{image?.close();if(previewUrl)URL.revokeObjectURL(previewUrl);controller?.abort();});
+})();

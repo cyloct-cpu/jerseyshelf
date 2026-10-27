@@ -1,0 +1,26 @@
+[
+  {
+    "device": "desktop",
+    "publicPagesChecked": [
+      "/",
+      "/products/2026-27-bayern-munich-away-kit-fan-edition",
+      "/account",
+      "/cart"
+    ],
+    "adminLinks": 0,
+    "footerLayout": "copyright retained, empty link removed",
+    "directAdminAccess": "303 to account login"
+  },
+  {
+    "device": "mobile",
+    "publicPagesChecked": [
+      "/",
+      "/products/2026-27-bayern-munich-away-kit-fan-edition",
+      "/account",
+      "/cart"
+    ],
+    "adminLinks": 0,
+    "footerLayout": "copyright retained, empty link removed",
+    "directAdminAccess": "303 to account login"
+  }
+]

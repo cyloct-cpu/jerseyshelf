@@ -1,0 +1,114 @@
+{
+  "testedAt": "2026-10-18T06:38:07.307Z",
+  "merchantTail": "4144",
+  "mode": "link",
+  "results": [
+    {
+      "name": "desktop home floating click",
+      "status": "pass"
+    },
+    {
+      "name": "desktop product selected variant quantity printing patch",
+      "status": "pass",
+      "message": "您好，我想咨询商品。\n2026-27赛季拜仁慕尼黑客场球衣 - 球迷版 / S ×2 | Print: 测试A&B #9 | Patches: 联盟臂章"
+    },
+    {
+      "name": "desktop product consultation without size",
+      "status": "pass"
+    },
+    {
+      "name": "desktop cart consultation",
+      "status": "pass"
+    },
+    {
+      "name": "desktop registration contact text",
+      "status": "pass"
+    },
+    {
+      "name": "desktop client cannot override merchant recipient",
+      "status": "pass"
+    },
+    {
+      "name": "desktop repeated requests keep same correct destination",
+      "status": "pass"
+    },
+    {
+      "name": "desktop stale CSRF rejected",
+      "status": "pass"
+    },
+    {
+      "name": "desktop mismatched variant rejected",
+      "status": "pass"
+    },
+    {
+      "name": "desktop invalid quantity rejected",
+      "status": "pass"
+    },
+    {
+      "name": "desktop empty cart rejected",
+      "status": "pass"
+    },
+    {
+      "name": "desktop no browser script exceptions",
+      "status": "pass"
+    },
+    {
+      "name": "mobile-emulation home floating click",
+      "status": "pass"
+    },
+    {
+      "name": "mobile-emulation product selected variant quantity printing patch",
+      "status": "pass",
+      "message": "您好，我想咨询商品。\n2026-27赛季拜仁慕尼黑客场球衣 - 球迷版 / S ×2 | Print: 测试A&B #9 | Patches: 联盟臂章"
+    },
+    {
+      "name": "mobile-emulation product consultation without size",
+      "status": "pass"
+    },
+    {
+      "name": "mobile-emulation cart consultation",
+      "status": "pass"
+    },
+    {
+      "name": "mobile-emulation registration contact text",
+      "status": "pass"
+    },
+    {
+      "name": "mobile-emulation client cannot override merchant recipient",
+      "status": "pass"
+    },
+    {
+      "name": "mobile-emulation repeated requests keep same correct destination",
+      "status": "pass"
+    },
+    {
+      "name": "mobile-emulation stale CSRF rejected",
+      "status": "pass"
+    },
+    {
+      "name": "mobile-emulation mismatched variant rejected",
+      "status": "pass"
+    },
+    {
+      "name": "mobile-emulation invalid quantity rejected",
+      "status": "pass"
+    },
+    {
+      "name": "mobile-emulation empty cart rejected",
+      "status": "pass"
+    },
+    {
+      "name": "mobile-emulation no browser script exceptions",
+      "status": "pass"
+    },
+    {
+      "name": "live orders customers and official message counts unchanged",
+      "status": "pass"
+    }
+  ],
+  "externalResult": {
+    "error": "page.goto: net::ERR_NETWORK_ACCESS_DENIED at https://wa.me/[merchant]\nCall log:\n\u001b[2m  - navigating to \"https://wa.me/[merchant]\", waiting until \"domcontentloaded\"\u001b[22m\n",
+    "url": "about:blank"
+  },
+  "actualPhoneAndMessageDelivery": "pending user device test"
+}

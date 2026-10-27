@@ -1,0 +1,40 @@
+✔ dual actions and independent direct checkout preserve the existing cart, including identical variants (3043.6536ms)
+✔ purchase identity prevents duplicate orders even with fresh submission keys and simultaneous requests (191.2178ms)
+✔ separate tabs retain selections and returning to the product restores quantity and customization (384.6218ms)
+✔ unavailable stock keeps the buy-now label visible but rejects checkout creation (190.3854ms)
+✔ quotes are bound to their checkout source, owner, lifetime and live prices (863.3102ms)
+✔ validation keeps form fields, renders inline errors, and country-aware postal requirements allow Gulf addresses (238.9302ms)
+✔ a direct purchase uses only its own quantity for promotions and free shipping (1805.5673ms)
+✔ last-item competition does not oversell and cancellation restores inventory once (580.6878ms)
+✔ currency confirmation and zero/three decimal order totals work for direct purchases (490.1727ms)
+✔ login rotates the session and resumes the same checkout with the existing quote (508.1702ms)
+✔ 客户所有入口受管理员鉴权、CSRF和跨站保护 (1636.3734ms)
+✔ 邮箱注册自动建档、记录姓名时间、待核实且未成交，只有一个首次跟进 (226.3553ms)
+✔ 仅邮箱订阅归入来源，不伪造注册时间，不自动创建账户 (76.2083ms)
+✔ WhatsApp未知、确认未联系、已联系分别统计，核实有记录且更换号码回到未知 (155.2358ms)
+✔ 默认测试下单仍保留库存逻辑，测试付款不算成交也不产生真实新订单提醒 (215.3678ms)
+✔ 正式订单关联注册客户，提交不是成交，首次联系和付款任务幂等 (285.0505ms)
+✔ 游客直接下单自动建立档案及待联系提醒；注册相同邮箱不认领游客订单 (395.6645ms)
+✔ 首次联系必须有真实结果；可记录沟通完成并设置下一次时间 (51.977ms)
+✔ 收款须核实、同币种、精度正确、不可超收；重放不重复记款，收齐才成交 (125.7177ms)
+✔ 发货、实际收货和回访分别处理；重复确认不重复生成回访 (103.4693ms)
+✔ 售后关联正确订单，处理历史保留，解决后关闭任务并能重新开启 (109.1207ms)
+✔ 退款保留流水，不自动恢复已发货库存；不能超退 (47.2958ms)
+✔ 取消正式未付款订单仅恢复一次库存，并关闭对应普通待办 (20.731ms)
+✔ 筛选、归档恢复、停止普通跟进、CSV防公式和页面防注入 (204.2018ms)
+✔ 历史关联初始化幂等，不改变订单授权、收款和已有跟进 (196.836ms)
+✔ 归档客户重新下正式订单会恢复档案，订单待联系不会遗漏 (203.4113ms)
+✔ 注册昵称及邮箱自动显示为只读，未下单不要求填写订单号 (176.3527ms)
+✔ 已保存收货姓名、国家及原始手机自动填入，订单号自动关联并默认选中 (158.5429ms)
+✔ 手动补充的姓名、地区和手机保留，恢复自动填充后采用最新收货资料 (225.5023ms)
+✔ 历史资料同步可重复执行，补全资料不会创建重复客户或改变订单权限 (174.7821ms)
+✔ 多接口后台配置鉴权、CSRF、密钥加密与状态脱敏、指定接口测试排队 (1826.7017ms)
+✔ 备份包含数据库、媒体与配套翻译凭据加密文件，可成套迁移 (351.8325ms)
+ℹ tests 32
+ℹ suites 0
+ℹ pass 32
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15865.6184

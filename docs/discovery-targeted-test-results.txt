@@ -1,0 +1,10 @@
+✔ 后台鉴权、CSRF、跨站请求保护 (1226.8461ms)
+✔ 商品推荐排序、手动管理、过滤、新品默认和最近浏览公开卡片 (1334.422ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2780.462

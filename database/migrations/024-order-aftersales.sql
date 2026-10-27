@@ -1,0 +1,18 @@
+CREATE TABLE order_followups(order_id TEXT PRIMARY KEY REFERENCES orders(id),owner TEXT NOT NULL DEFAULT '',stage TEXT NOT NULL DEFAULT 'new',result TEXT NOT NULL DEFAULT '',next_at TEXT NOT NULL,updated_at TEXT NOT NULL);
+CREATE TABLE service_cases(id INTEGER PRIMARY KEY,order_id TEXT NOT NULL REFERENCES orders(id),kind TEXT NOT NULL,status TEXT NOT NULL DEFAULT 'review',reason TEXT NOT NULL,evidence TEXT NOT NULL DEFAULT '',owner TEXT NOT NULL DEFAULT '',currency TEXT NOT NULL,goods_ceiling INTEGER NOT NULL,shipping_ceiling INTEGER NOT NULL,approved_amount INTEGER NOT NULL DEFAULT 0,approval_note TEXT NOT NULL DEFAULT '',return_tracking TEXT NOT NULL DEFAULT '',request_key TEXT NOT NULL UNIQUE,created_at TEXT NOT NULL,updated_at TEXT NOT NULL);
+CREATE TABLE service_items(id INTEGER PRIMARY KEY,case_id INTEGER NOT NULL REFERENCES service_cases(id),order_item_id INTEGER NOT NULL REFERENCES order_items(id),quantity INTEGER NOT NULL CHECK(quantity>0),received INTEGER NOT NULL DEFAULT 0,restocked INTEGER NOT NULL DEFAULT 0,replaced INTEGER NOT NULL DEFAULT 0,ceiling INTEGER NOT NULL,price_snapshot TEXT NOT NULL,UNIQUE(case_id,order_item_id));
+CREATE TABLE service_events(id INTEGER PRIMARY KEY,case_id INTEGER REFERENCES service_cases(id),order_id TEXT NOT NULL REFERENCES orders(id),kind TEXT NOT NULL,body TEXT NOT NULL,actor_id INTEGER NOT NULL REFERENCES users(id),occurred_at TEXT NOT NULL,created_at TEXT NOT NULL,request_key TEXT UNIQUE);
+CREATE TABLE service_refunds(id INTEGER PRIMARY KEY,case_id INTEGER NOT NULL REFERENCES service_cases(id),order_id TEXT NOT NULL REFERENCES orders(id),amount INTEGER NOT NULL CHECK(amount>0),currency TEXT NOT NULL,source TEXT NOT NULL,carrier_offset INTEGER NOT NULL DEFAULT 0,transfer_amount INTEGER NOT NULL,transfer_currency TEXT NOT NULL,method TEXT NOT NULL,recipient TEXT NOT NULL,reference TEXT NOT NULL,occurred_at TEXT NOT NULL,actor_id INTEGER NOT NULL REFERENCES users(id),evidence TEXT NOT NULL,request_key TEXT NOT NULL UNIQUE,created_at TEXT NOT NULL,UNIQUE(order_id,reference));
+CREATE TABLE reconciliation_cases(id INTEGER PRIMARY KEY,order_id TEXT NOT NULL REFERENCES orders(id),kind TEXT NOT NULL,expected INTEGER NOT NULL,actual INTEGER NOT NULL,currency TEXT NOT NULL,status TEXT NOT NULL DEFAULT 'open',owner TEXT NOT NULL DEFAULT '',evidence TEXT NOT NULL,result TEXT NOT NULL DEFAULT '',created_at TEXT NOT NULL,updated_at TEXT NOT NULL);
+CREATE INDEX service_cases_order ON service_cases(order_id,status);
+CREATE INDEX service_refunds_order ON service_refunds(order_id);
+CREATE INDEX service_events_order ON service_events(order_id,id);
+ALTER TABLE service_cases ADD COLUMN approved_shipping INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE service_cases ADD COLUMN customer_case_id INTEGER REFERENCES customer_cases(id);
+ALTER TABLE service_cases ADD COLUMN replacement_tracking TEXT NOT NULL DEFAULT '';
+ALTER TABLE service_items ADD COLUMN replacement_variant_id INTEGER REFERENCES variants(id);
+ALTER TABLE cod_remittances ADD COLUMN transfer_currency TEXT NOT NULL DEFAULT '';
+ALTER TABLE cod_remittances ADD COLUMN transfer_net INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE cod_remittances ADD COLUMN transfer_note TEXT NOT NULL DEFAULT '';
+CREATE TABLE service_attachments(id INTEGER PRIMARY KEY,case_id INTEGER NOT NULL REFERENCES service_cases(id),name TEXT NOT NULL,content_type TEXT NOT NULL,digest TEXT NOT NULL,content BLOB NOT NULL,actor_id INTEGER NOT NULL REFERENCES users(id),created_at TEXT NOT NULL,UNIQUE(case_id,digest));
+INSERT INTO order_followups(order_id,next_at,updated_at) SELECT id,created_at,created_at FROM orders WHERE order_kind='external' AND fulfillment_status='pending';

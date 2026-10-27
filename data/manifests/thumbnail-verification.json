@@ -1,0 +1,30 @@
+{
+  "primaryImages": 4155,
+  "derivedFiles": 8310,
+  "missingFiles": [],
+  "httpSamples": [
+    {
+      "status": 200,
+      "type": "image/webp",
+      "widthLimit": 480,
+      "dimensions": [
+        349,
+        480
+      ],
+      "bytes": 18780
+    },
+    {
+      "status": 200,
+      "type": "image/webp",
+      "widthLimit": 960,
+      "dimensions": [
+        697,
+        960
+      ],
+      "bytes": 53804
+    }
+  ],
+  "compatibleJpegOriginalUnchanged": true,
+  "ok": true,
+  "verifiedAt": "2026-10-14T11:01:31.420442+00:00"
+}

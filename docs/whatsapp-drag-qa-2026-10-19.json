@@ -1,0 +1,24 @@
+[
+  {
+    "device": "desktop-mouse",
+    "drag": true,
+    "noAccidentalNavigation": true,
+    "edgeSnap": true,
+    "refreshAndPageRestore": true,
+    "resizeBounds": true,
+    "clickNavigation": true,
+    "pageScroll": true,
+    "corruptStorageSafe": true
+  },
+  {
+    "device": "mobile-touch",
+    "drag": true,
+    "noAccidentalNavigation": true,
+    "edgeSnap": true,
+    "refreshAndPageRestore": true,
+    "resizeBounds": true,
+    "clickNavigation": true,
+    "pageScroll": true,
+    "corruptStorageSafe": true
+  }
+]
